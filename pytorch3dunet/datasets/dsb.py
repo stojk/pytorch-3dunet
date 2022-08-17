@@ -113,7 +113,7 @@ class DSB2018Dataset(ConfigDataset):
     def _load_files(dir, expand_dims, only_keep_ind=None):
         files_data = []
         paths = []
-        for file in os.listdir(dir):
+        for file in sorted(os.listdir(dir)):
             path = os.path.join(dir, file)
             img = np.load(path)
             if only_keep_ind:
