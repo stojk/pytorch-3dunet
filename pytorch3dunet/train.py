@@ -2,6 +2,9 @@ import random
 
 import torch
 
+import sys
+sys.path.append('../')
+
 from pytorch3dunet.unet3d.config import load_config
 from pytorch3dunet.unet3d.trainer import create_trainer
 from pytorch3dunet.unet3d.utils import get_logger

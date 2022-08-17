@@ -2,6 +2,8 @@
 # microscope. Training done with Binary Cross-Entropy.
 # Training and validation data can be downloaded from: https://osf.io/thxzn/
 
+
+# device: cpu
 # model configuration
 model:
   # model class, e.g. UNet3D, ResidualUNet3D
@@ -32,9 +34,9 @@ trainer:
   # make sure to decrease the learning rate in the optimizer config accordingly
   pre_trained: null
   # how many iterations between validations
-  validate_after_iters: 1000
+  validate_after_iters: 50
   # how many iterations between tensorboard logging
-  log_after_iters: 100
+  log_after_iters: 10
   # max number of epochs
   max_num_epochs: 200
   # max number of iterations
@@ -76,11 +78,11 @@ loaders:
   # class of the HDF5 dataset, currently StandardHDF5Dataset and LazyHDF5Dataset are supported.
   # When using LazyHDF5Dataset make sure to set `num_workers = 1`, due to a bug in h5py which corrupts the data
   # when reading from multiple threads.
-  dataset: StandardHDF5Dataset
+  dataset: DSB2018Dataset
   # batch dimension; if number of GPUs is N > 1, then a batch_size of N * batch_size will automatically be taken for DataParallel
   batch_size: 1
   # how many subprocesses to use for data loading
-  num_workers: 8
+  num_workers: 0
   # path to the raw data within the H5
   raw_internal_path: raw
   # path to the the label data within the H5
@@ -110,29 +112,29 @@ loaders:
         # subtract mean and divide by std dev
         - name: Standardize
         # randomly flips the volume in one of the axis
-        - name: RandomFlip
+        # - name: RandomFlip
         # randomly rotates the volume with 90 deg across a randomly chosen plane
-        - name: RandomRotate90
-        - name: RandomRotate
-          # rotate only in ZY plane due to anisotropy
-          axes: [[2, 1]]
-          # rotates by choosing random angle from [-30, 30] deg
-          angle_spectrum: 30
-          mode: reflect
-        - name: ElasticDeformation
-          spline_order: 3
+        # - name: RandomRotate90
+        # - name: RandomRotate
+        #   # rotate only in ZY plane due to anisotropy
+        #   axes: [[0, 1]]
+        #   # rotates by choosing random angle from [-30, 30] deg
+        #   angle_spectrum: 30
+        #   mode: reflect
+        # - name: ElasticDeformation
+        #   spline_order: 3
         - name: ToTensor
           expand_dims: true
       label:
-        - name: RandomFlip
-        - name: RandomRotate90
-        - name: RandomRotate
-          # rotate only in ZY plane due to anisotropy
-          axes: [[2, 1]]
-          angle_spectrum: 30
-          mode: reflect
-        - name: ElasticDeformation
-          spline_order: 0
+        # - name: RandomFlip
+        # - name: RandomRotate90
+        # - name: RandomRotate
+        #   # rotate only in ZY plane due to anisotropy
+        #   axes: [[0, 1]]
+        #   angle_spectrum: 30
+        #   mode: reflect
+        # - name: ElasticDeformation
+        #   spline_order: 0
           # convert target volume to binary mask
         - name: BlobsToMask
           # append ground truth labels in the last channel of the target for evaluation metric computation

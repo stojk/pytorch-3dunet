@@ -217,7 +217,7 @@ def get_train_loaders(config):
     logger.info(f'Batch size for train/val loader: {batch_size}')
     # when training with volumetric data use batch_size of 1 due to GPU memory constraints
     return {
-        'train': DataLoader(ConcatDataset(train_datasets), batch_size=batch_size, shuffle=True,
+        'train': DataLoader(ConcatDataset(train_datasets), batch_size=batch_size, shuffle=False,
                             num_workers=num_workers),
         # don't shuffle during validation: useful when showing how predictions for a given batch get better over time
         'val': DataLoader(ConcatDataset(val_datasets), batch_size=batch_size, shuffle=False, num_workers=num_workers)

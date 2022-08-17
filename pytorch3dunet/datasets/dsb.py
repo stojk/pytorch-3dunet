@@ -30,7 +30,7 @@ def dsb_prediction_collate(batch):
 
 
 class DSB2018Dataset(ConfigDataset):
-    def __init__(self, root_dir, phase, transformer_config, mirror_padding=(0, 32, 32), expand_dims=True):
+    def __init__(self, root_dir, phase, transformer_config, mirror_padding=(0, 32, 32), expand_dims=False):
         assert os.path.isdir(root_dir), f'{root_dir} is not a directory'
         assert phase in ['train', 'val', 'test']
 
@@ -60,7 +60,7 @@ class DSB2018Dataset(ConfigDataset):
             # load labeled images
             masks_dir = os.path.join(root_dir, 'masks')
             assert os.path.isdir(masks_dir)
-            self.masks, _ = self._load_files(masks_dir, expand_dims)
+            self.masks, _ = self._load_files(masks_dir, expand_dims, only_keep_ind=4)
             assert len(self.images) == len(self.masks)
             # load label images transformer
             self.masks_transform = transformer.label_transform()
@@ -106,21 +106,21 @@ class DSB2018Dataset(ConfigDataset):
         file_paths = phase_config['file_paths']
         # mirror padding conf
         mirror_padding = dataset_config.get('mirror_padding', None)
-        expand_dims = dataset_config.get('expand_dims', True)
+        expand_dims = dataset_config.get('expand_dims', False)
         return [cls(file_paths[0], phase, transformer_config, mirror_padding, expand_dims)]
 
     @staticmethod
-    def _load_files(dir, expand_dims):
+    def _load_files(dir, expand_dims, only_keep_ind=None):
         files_data = []
         paths = []
         for file in os.listdir(dir):
             path = os.path.join(dir, file)
-            img = np.asarray(imageio.imread(path))
-            if expand_dims:
-                dims = img.ndim
+            img = np.load(path)
+            if only_keep_ind:
+                img = img[only_keep_ind,:,:]
                 img = np.expand_dims(img, axis=0)
-                if dims == 3:
-                    img = np.transpose(img, (3, 0, 1, 2))
+            # img = np.transpose(img, (1, 2, 0))
+            # print(img.shape)
 
             files_data.append(img)
             paths.append(path)

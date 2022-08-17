@@ -1,4 +1,5 @@
 import torch.nn as nn
+import torch
 
 from pytorch3dunet.unet3d.buildingblocks import DoubleConv, ExtResNetBlock, create_encoders, \
     create_decoders
@@ -58,6 +59,8 @@ class Abstract3DUNet(nn.Module):
         # channels to the number of labels
         self.final_conv = nn.Conv3d(f_maps[0], out_channels, 1)
 
+        self.final_collapse = nn.Linear(9, 1)
+
         if is_segmentation:
             # semantic segmentation problem
             if final_sigmoid:
@@ -87,6 +90,12 @@ class Abstract3DUNet(nn.Module):
             x = decoder(encoder_features, x)
 
         x = self.final_conv(x)
+
+        x = torch.moveaxis(x,2,4)
+
+        x = self.final_collapse(x)
+
+        x = torch.moveaxis(x,4,2)
 
         # apply final_activation (i.e. Sigmoid or Softmax) only during prediction. During training the network outputs logits
         if not self.training and self.final_activation is not None:
