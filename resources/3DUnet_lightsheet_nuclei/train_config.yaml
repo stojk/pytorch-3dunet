@@ -122,6 +122,7 @@ loaders:
           mode: reflect
         - name: ToTensor
           expand_dims: true
+        - name: Standardize
         - name: RandomResizedCrop # aka Zoom in
           size: [256,256]
           scale: [0.5, 1.0]
@@ -130,7 +131,6 @@ loaders:
           shear: 30
         # - name: ColorJitter
         #   brightness: [0.5,1.5]
-        - name: Standardize
       label:
         - name: RandomFlip
         - name: RandomRotate90
