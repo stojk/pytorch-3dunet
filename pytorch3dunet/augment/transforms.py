@@ -115,7 +115,7 @@ class RandomRotate:
 
 class RandomResizedCrop:
     """TODO"""
-    def __init__(self, random_state, size=256, scale=(0.08, 1.0), ratio=(1,1), execution_probability=0.5, **kwargs):
+    def __init__(self, random_state, size=256, scale=(0.08, 1.0), ratio=(1,1), execution_probability=0.1, **kwargs):
         self.random_state = random_state
         self.size = size
         self.scale = scale
@@ -135,7 +135,7 @@ class RandomResizedCrop:
 
 class RandomShear:
     """TODO"""
-    def __init__(self, random_state, degrees=0, shear=30, execution_probability=0.5, **kwargs):
+    def __init__(self, random_state, degrees=0, shear=30, execution_probability=0.1, **kwargs):
         self.random_state = random_state
         self.degrees = degrees
         self.shear = shear
