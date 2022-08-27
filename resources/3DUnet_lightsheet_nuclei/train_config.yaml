@@ -112,29 +112,32 @@ loaders:
         # subtract mean and divide by std dev
         - name: Standardize
         # randomly flips the volume in one of the axis
-        # - name: RandomFlip
+        - name: RandomFlip
         # randomly rotates the volume with 90 deg across a randomly chosen plane
-        # - name: RandomRotate90
-        # - name: RandomRotate
-        #   # rotate only in ZY plane due to anisotropy
-        #   axes: [[0, 1]]
-        #   # rotates by choosing random angle from [-30, 30] deg
-        #   angle_spectrum: 30
-        #   mode: reflect
-        # - name: ElasticDeformation
-        #   spline_order: 3
+        - name: RandomRotate90
+        - name: RandomRotate
+          # rotate only in ZY plane due to anisotropy
+          axes: [[1, 2]]
+          # rotates by choosing random angle from [-30, 30] deg
+          angle_spectrum: 90
+          mode: reflect
         - name: ToTensor
           expand_dims: true
+        # - name: ColorJitter
+        - name: RandomResizedCrop # aka Zoom in
+          size: [256,256]
+          scale: [0.5, 1.0]
+          ratio: [1,1]
+        - name: RandomShear
+          shear: 30
       label:
-        # - name: RandomFlip
-        # - name: RandomRotate90
-        # - name: RandomRotate
-        #   # rotate only in ZY plane due to anisotropy
-        #   axes: [[0, 1]]
-        #   angle_spectrum: 30
-        #   mode: reflect
-        # - name: ElasticDeformation
-        #   spline_order: 0
+        - name: RandomFlip
+        - name: RandomRotate90
+        - name: RandomRotate
+          # rotate only in ZY plane due to anisotropy
+          axes: [[1, 2]]
+          angle_spectrum: 90
+          mode: reflect
           # convert target volume to binary mask
         - name: BlobsToMask
           # append ground truth labels in the last channel of the target for evaluation metric computation
@@ -144,6 +147,12 @@ loaders:
           boundary: false
         - name: ToTensor
           expand_dims: false
+        - name: RandomResizedCrop # aka Zoom in
+          size: [256,256]
+          scale: [0.5, 1.0]
+          ratio: [1,1]
+        - name: RandomShear
+          shear: 30
 
   # configuration of the val loader
   val:

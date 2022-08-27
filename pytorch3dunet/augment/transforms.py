@@ -3,6 +3,8 @@ import random
 
 import numpy as np
 import torch
+import torchvision.transforms as T
+
 from scipy.ndimage import rotate, map_coordinates, gaussian_filter, convolve
 from skimage import measure
 from skimage.filters import gaussian
@@ -111,6 +113,45 @@ class RandomRotate:
 
         return m
 
+class RandomResizedCrop:
+    """TODO"""
+    def __init__(self, random_state, size=256, scale=(0.08, 1.0), ratio=(1,1), execution_probability=0.5, **kwargs):
+        self.random_state = random_state
+        self.size = size
+        self.scale = scale
+        self.ratio = ratio
+        self._resizeCrop = T.RandomResizedCrop(
+            size=size, scale=scale, ratio=ratio)
+        self.execution_probability = execution_probability
+
+    def __call__(self, m):
+        if self.random_state.uniform() < self.execution_probability:
+            seed = self.random_state.randint(10000)
+            random.seed(seed)
+            torch.manual_seed(seed)
+            m = self._resizeCrop(m)
+
+        return m
+
+class RandomShear:
+    """TODO"""
+    def __init__(self, random_state, degrees=0, shear=30, execution_probability=0.5, **kwargs):
+        self.random_state = random_state
+        self.degrees = degrees
+        self.shear = shear
+        self._shear = T.RandomAffine(
+            degrees=degrees, shear=shear,
+            interpolation=T.InterpolationMode.BILINEAR)
+        self.execution_probability = execution_probability
+
+    def __call__(self, m):
+        if self.random_state.uniform() < self.execution_probability:
+            seed = self.random_state.randint(10000)
+            random.seed(seed)
+            torch.manual_seed(seed)
+            m = self._shear(m)
+
+        return m
 
 class RandomContrast:
     """
