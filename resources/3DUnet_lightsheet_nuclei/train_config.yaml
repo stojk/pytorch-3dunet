@@ -110,7 +110,6 @@ loaders:
     transformer:
       raw:
         # subtract mean and divide by std dev
-        - name: Standardize
         # randomly flips the volume in one of the axis
         - name: RandomFlip
         # randomly rotates the volume with 90 deg across a randomly chosen plane
@@ -123,13 +122,15 @@ loaders:
           mode: reflect
         - name: ToTensor
           expand_dims: true
-        # - name: ColorJitter
         - name: RandomResizedCrop # aka Zoom in
           size: [256,256]
           scale: [0.5, 1.0]
           ratio: [1,1]
         - name: RandomShear
           shear: 30
+        # - name: ColorJitter
+        #   brightness: [0.5,1.5]
+        - name: Standardize
       label:
         - name: RandomFlip
         - name: RandomRotate90
@@ -153,6 +154,8 @@ loaders:
           ratio: [1,1]
         - name: RandomShear
           shear: 30
+        # - name: ColorJitter
+        #   brightness: [1,1]
 
   # configuration of the val loader
   val:

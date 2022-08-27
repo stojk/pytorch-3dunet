@@ -153,6 +153,25 @@ class RandomShear:
 
         return m
 
+class ColorJitter:
+    """
+    Adjust brightness TODO`.
+    """
+    def __init__(self, random_state, brightness=(0.5, 1.5), execution_probability=0.1, **kwargs):
+        self.random_state = random_state
+        assert len(brightness) == 2
+        self.brightness = brightness
+        self._color_jitter = T.ColorJitter(brightness=brightness)
+        self.execution_probability = execution_probability
+
+    def __call__(self, m):
+        if self.random_state.uniform() < self.execution_probability:
+            ratio = self.random_state.uniform(self.brightness[0], self.brightness[1])
+            black = torch.zeros_like(m)
+            m = ratio * m + (1.0 - ratio) * black
+
+        return m
+
 class RandomContrast:
     """
     Adjust contrast by scaling each voxel to `mean + alpha * (v - mean)`.
